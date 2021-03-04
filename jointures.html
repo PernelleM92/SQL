@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+        <title>SQL COURS</title>
+
+    </head>
+
+    <body class="bg-light">
+        <div class="container-fluid">
+        <!-- ========================================= -->
+        <!-- navigation -->
+        <!-- ========================================= -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="#">cours SQL</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav">
+                            <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
+                            <a class="nav-link" href="#">Menu 1</a>
+                            <a class="nav-link" href="#">Menu 2</a>
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Menu 3 - Disabled</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        
+
+            <!-- ========================================= -->
+			<!-- Contenu principal -->
+			<!-- ========================================= -->
+
+            <div class="container">
+                <div class="row m-2">
+                    <div class="col-sm-12">
+                        <h1 class="text-center">Les Jointures - MySQL</h1>
+                    </div>
+                </div> <!-- fin de la première row -->
+                <div class="row m-2 border p-2">
+                    <div class="col-sm-12">
+                        <h2 class="text-center" id="insertInto">Les jointures SQL</h2>
+                        <p>Les jointures permettent, comme les requetes imbriqués, d'esffectuer des requêtes sur plusieurs tables. In faut bien sûr un champs commune. L'avantage des jointures est que l'on peut obtenir le résultat final des colonnes et des champs issues de plusieurs tables différentes</p>
+                        <ul>
+                            <li><code>SELECT</code> : liste des champs que je souhaite afficher dans mon résultat</li>: 
+                            <li><code>FROM</code> : de quelles tables cel provient-il ? </li>
+                            <li><code>WHERE</code> : condition de jointur pour assurer le croisement des données</li>
+                            <li><code>AND : OR</code> : autre condition éventuelle</li>
+                        </ul>
+                    
+                        <ul>
+                            <li>Afficher les dates auquelles Guillaume s'est rendu à la bibliothèque pour emprunter ou rendre un livre, on a besoin de 3 colonnes ; prenom, date_sortie, date_rendu : <code>SELECT abonne.prenom, emprunt.date_sortie, emprunt.date_rendu FROM abonne, emprunt WHERE abonne.id_abonne = emprunt.id_abonne AND abonne.prenom = 'Guillaume';</code> </li>
+                            <li>La même requête avec des préfixes <code> SELECT a.prenom, e.date_sortie, e.date_rendu FROM abonne a, emprunt e WHERE a.id_abonne = e.id_abonne AND a.prenom = 'Guillaume';</code></li>
+                            <blockquote>
+                                <h6>Exemple de requête non préfixée et préfixée</h6>
+                                <code>SELECT * FROM t_constructeur tc, t_etat te, t_fabricant tf, t_materiaux tma, t_modele tmo WHERE tmo.id_fabricant=tf.id_fabricant AND tmo.id_constructeur=tc.id_constructeur AND tmo.id_etat=te.id_etat AND tmo.id_materiaux=tma.id_materiaux ORDER BY tmo.id_modele DESC</code>
+                                <br>
+                                <code>SELECT tmo.id_modele FROM t_constructeur, t_etat, t_fabricant, t_materiaux, t_modele WHERE t_modele.id_fabricant=t_fabricant.id_fabricant AND t_modele.id_constructeur=t_constructeur.id_constructeur AND t_modele.id_etat=t_etat.id_etat AND t_modele.id_materiaux=t_materiaux.id_materiaux ORDER BY id_modele DESC</code>
+                            </blockquote>
+                            <li>QUI a emprunté "une vie en 2014 ? : <code>SELECT abonne.prenom FROM abonne, emprunt, livre WHERE livre.id_livre = emprunt.id_livre AND emprunt.id_abonne = abonne.id_abonne AND livre.titre = 'une vie' AND emprunt.date_sortie LIKE '2014%';</code></li>
+                            <li>La même avcec préfixes <code>SELECT a.prenom FROM abonne a, emprunt e, livre l WHERE l.id_livre = e.id_livre AND e.id_abonne = a.id_abonne AND l.titre = 'Une vie' AND e.date_sortie LIKE '2014%';
+                            </code></li>
+                            <li>La même en requête imbriquée : <code>SELECT prenom FROM abonne WHERE id_abonne IN ( SELECT id_abonne FROM emprunt WHERE date_sortie LIKE '2014%' AND id_livre = (SELECT id_livre FROM livre WHERE titre='Une vie'));</code></li>
+                            <li>....</li>
+                            <li>Afficher le nombre de livres empruntés dans chaqe abonné <code>SELECT a.prenom, COUNT(e.id_livre) AS 'nombre de livre empruntés'FROM abonne a, emprunt e WHERE a.id_abonne=e.id_abonne GROUP BY e.id_abonne;</code></li>
+                             <li>...</li>
+                             <li>Qui a emprunté quoi ? et quand ? : (indice Qui = prénom, quoi = titre du livre, quand date de sortie ; 3 colonnes) : <code>SELECT abonne.prenom, livre.titre,emprunt.date_sortie FROM abonne, livre, emprunt WHERE abonne.id_abonne = emprunt.id_abonne AND emprunt.id_livre = livre.id_livre ORDER BY abonne.prenom</code></li>
+                        </ul>
+                        <hr>
+                        <ul>
+                            <li>Ajout d'un abonné <code>INSERT INTO abonne (id_abonne, prenom) VALUES (NULL, 'Alex')</code> ou <code>INSERT INTO abonne (prenom) VALUES('Alex');</code>ou <code>INSERT INTO abonne VALUES (NULL, 'Alex');</code></li>
+                            <li>...</li>
+                            <li>Afficher le prenom des abonnés avec l'id ou le numéro des livres qu'ils ont emprunté <code>SELECT abonne.prenom, emprunt.id_livre FROM abonne, emprunt WHERE abonne.id_abonne = emprunt.id_abonne ORDER BY abonne.prenom</code></li>
+                            <li>....</li>
+                            <li><h3>Les jointures externes</h3></li>
+                            <li>Lz même avec une jointure externe, qui sera plus complète : <code>SELECT abonne.prenom, emprunt.id_livre FROM abonne LEFT JOIN emprunt ON abonne.id_abonne = emprunt.id_abonne
+                            </code></li>
+                            <li>FROM LEFT JOIN : la table placé a gauche de l'expression LEFT JOIN sera la table dont tous les résultats seront rapatriés(sans orrespondance exigés dans l'autre table): nous savon qu'alex fera parti des résultats même s'in n'a pas emprunté de livre.ON : la condition se fais par le mot clef ON et non plus WHERE dans le cadre d'une requete externe de type LEFT JOIN ou RIGHT JOIN...</li>
+                        </ul>
+                        <ul>
+                            <li>Création de la BDD "immobilier" : <code></code></li>
+                            <li>...</li>
+                            <li>Création de la table "agence" : <code>CREATE TABLE IF NOT EXISTS agence (idAgence int(6) NOTNULL AUTO_INCREMENT,nom varchar(100) NOT NULL,adresse varchar(100) NOT NULL,PRIMARY KEY (idAgence)) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;</code></li>
+                            <li>Création de la table "demande" : <code>CREATE TABLE IF NOT EXISTS demande (
+                                idDemande int(5) NOT NULL AUTO_INCREMENT,<br>
+                                idPersonne int(3) NOT NULL,<br>
+                                genre varchar(100) NOT NULL,<br>
+                                ville varchar(100) NOT NULL,<br>
+                                budget int(7) NOT NULL,<br>
+                                superficie int(5) NOT NULL,<br>
+                                categorie varchar(100) NOT NULL,<br>
+                                PRIMARY KEY (idDemande),<br>
+                                KEY idPersonne (idPersonne)br
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;</code></li>
+                            <li>Création de la table  "logement" :<code>CREATE TABLE IF NOT EXISTS logement (
+                                idLogement int(4) NOT NULL AUTO_INCREMENT,<br>
+                                genre varchar(100) NOT NULL,<br>
+                                ville varchar(100) NOT NULL,<br>
+                                prix int(7) NOT NULL,<br>
+                                superficie int(5) NOT NULL,<br>
+                                categorie varchar(100) NOT NULL,<br>
+                                PRIMARY KEY (idLogement)br
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;</code></li>
+                            <li>Création de la table "logement_agence"  : <code>CREATE TABLE IF NOT EXISTS logement_agence (
+                                idLogementAgence int(5) NOT NULL AUTO_INCREMENT,<br>
+                                idAgence int(6) NOT NULL,
+                                idLogement int(4) NOT NULL,
+                                frais int(7) NOT NULL,
+                                PRIMARY KEY (idLogementAgence),
+                                KEY idAgence (idAgence),
+                                KEY idLogement (idLogement)
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;</code></li>
+                            <li>Création de la table "logement_personne" : <code>CREATE TABLE IF NOT EXISTS logement_agence (
+                                idLogementAgence int(5) NOT NULL AUTO_INCREMENT,<br>
+                                idAgence int(6) NOT NULL,<br>
+                                idLogement int(4) NOT NULL,<br>
+                                frais int(7) NOT NULL,<br>
+                                PRIMARY KEY (idLogementAgence),<br>
+                                KEY idAgence (idAgence),<br>
+                                KEY idLogement (idLogement)br
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;</code></li>
+                            <li>Création de la table "personne" : <code>CREATE TABLE IF NOT EXISTS personne (
+                                idPersonne int(3) NOT NULL AUTO_INCREMENT,<br>
+                                prenom varchar(100) NOT NULL,<br>
+                                PRIMARY KEY (idPersonne) <br>
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;</code></li>
+                            <li>Création des clefs étrangères : <code></code></li>
+                            <li> : <code></code></li>
+                            <li> : <code></code></li>
+                         </ul>
+                        
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h2>Les jointures externes</h2>
+                        </div>
+                    </div>
+                    
+                </div><!-- fin de la rangée -->
+                
+            </div> <!-- fin du container -->
+
+
+
+
+
+
+
+        <!-- Optional JavaScript; choose one of the two! -->
+
+        <!-- Option 1: jQuery 
+            and Bootstrap Bundle (includes Popper) -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
+        <!-- Option 2: Separate Popper and Bootstrap JS -->
+        <!--
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+        -->
+    </body>
+</html> 
